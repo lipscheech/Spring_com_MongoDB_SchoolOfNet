@@ -2,7 +2,9 @@ package com.schoolofnet.SpringMongoWebflux;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/Costumers")
+@RequestMapping("/Costumer")
 public class CustomerResouce {
 	
 	@Autowired
@@ -35,6 +37,13 @@ public class CustomerResouce {
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public Mono<Customer> create(@RequestBody Customer customer){
 		return this.repository.save(customer);
+	}
+	
+	@GetMapping("/{id}")
+	public Mono<ResponseEntity<Customer>> findById(@PathVariable("id") String id) {		
+		return this.repository.findById(id)
+				.map(row -> ResponseEntity.ok(row))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 	
 	
